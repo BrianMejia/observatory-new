@@ -19,6 +19,8 @@ Cargo.lock
 /target
 #**/*.rs.bk
 
+/logs
+
 # dotenv config which may have sensitive data
 .env
 
