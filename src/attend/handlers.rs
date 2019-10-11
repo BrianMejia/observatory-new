@@ -85,6 +85,8 @@ pub fn attend_post(conn: ObservDbConn, l: UserGuard, code: Form<AttendCode>) -> 
                 .values(&newattend)
                 .execute(&*conn)
                 .expect("Failed to insert attendance into database");
+            
+            // Log attendance event, write directly to file or use an object? Grab user_id/user_name? 
             Redirect::to("/dashboard")
         } else {
             Redirect::to(format!("/attend?e={}", FormError::InvalidCode))

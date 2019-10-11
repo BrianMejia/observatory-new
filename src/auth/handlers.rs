@@ -15,6 +15,24 @@ use crate::ObservDbConn;
 use super::crypto::*;
 use super::templates::*;
 
+pub fn log(log_name : Option<String>, logged_id : i32, logged_name : String, action : String) {
+    use std::fs::OpenOptions;
+    use std::io::Write as LogWrite;
+
+    let log_file = log_name.unwrap_or(String::from("./logs/log.txt"));
+
+    let mut file = OpenOptions::new().read(true).append(true).open(log_file.as_str())
+        .ok()
+        .expect("File Opening Error");
+
+    file.write_all(logged_name.as_bytes()).expect("File Appending Error");
+    file.write_all(" (".as_bytes()).expect("File Appending Error");
+    file.write_all(logged_id.to_string().as_bytes()).expect("File Appending Error");
+    file.write_all(") : ".as_bytes()).expect("File Appending Error");
+    file.write_all(action.as_bytes()).expect("File Appending Error");
+    file.write_all("\n".as_bytes()).expect("File Appending Error");
+}
+
 /// GET handler for `/signup`
 #[get("/signup?<e>")]
 pub fn signup(l: MaybeLoggedIn, e: Option<FormError>) -> SignUpTemplate {
@@ -129,7 +147,16 @@ pub fn signup_post(conn: ObservDbConn, mut cookies: Cookies, form: Form<SignUpFo
             .expect("Failed to insert new relation into database");
     }
 
+    let mut signup_action = String::from("New user (");
+    signup_action.push_str(user.real_name.as_str());
+    signup_action.push_str(" [");
+    signup_action.push_str(&(user.id.to_string()));
+    signup_action.push_str("]");
+    signup_action.push_str(") has been added to the database.");
+
     cookies.add_private(Cookie::new("user_id", format!("{}", user.id)));
+
+    log(None, user.id, user.real_name, signup_action);
 
     Redirect::to(format!("/users/{}", user.id))
 }

@@ -11,6 +11,7 @@ use rocket_contrib::json::Json;
 use crate::auth::crypto::*;
 use crate::guards::*;
 use crate::ObservDbConn;
+use crate::auth::handlers::log;
 
 use super::models::*;
 use super::templates::*;

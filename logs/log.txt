@@ -1,0 +1,3 @@
+Start log
+User 4(4) : New user (4) has been added to the database.
+User 5 (5) : New user (User 5 [5]) has been added to the database.
